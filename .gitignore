@@ -17,3 +17,6 @@ Thumbs.db
 
 # Configurazioni di PyCharm
 .idea/
+
+# Dati di grandi dimensioni
+/data/
