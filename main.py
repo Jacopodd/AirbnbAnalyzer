@@ -54,21 +54,26 @@ def aggiorna_location_alloggi(db):
 
 
 def main():
-    client = MongoClient("mongodb://localhost:27017")
-    db = client["airbnbMilano"]
+    # client = MongoClient("mongodb://localhost:27017")
+    # db = client["airbnbMilano"]
+    #
+    #
+    # print("=== ESECUZIONE JOIN PREZZI → ALLOGGI ===")
+    # # print(db["prezzi"].count_documents({"id_alloggio": "23986"}))  # quante righe ci sono?
+    # # print(db["prezzi"].find_one({"id_alloggio": "23986"}))  # verifica che sia accessibile
+    # #print(list(db["prezzi"].index_information()))
+    # print(db["alloggi"].count_documents({"location": {"$exists": True}}))
+    #
+    # #esegui_lookup_host_alloggi(db)
+    # #esegui_lookup_alloggi_recensioni(db)
+    # #esegui_lookup_alloggi_prezzi(db)
+    # esegui_lookup_alloggi_quartieri(db)
+    # print("=== FINE ===")
+    import os
 
+    print("Contenuto della cartella static:")
+    print(os.listdir(os.path.join(os.path.dirname(__file__), "static")))
 
-    print("=== ESECUZIONE JOIN PREZZI → ALLOGGI ===")
-    # print(db["prezzi"].count_documents({"id_alloggio": "23986"}))  # quante righe ci sono?
-    # print(db["prezzi"].find_one({"id_alloggio": "23986"}))  # verifica che sia accessibile
-    #print(list(db["prezzi"].index_information()))
-    print(db["alloggi"].count_documents({"location": {"$exists": True}}))
-
-    #esegui_lookup_host_alloggi(db)
-    #esegui_lookup_alloggi_recensioni(db)
-    #esegui_lookup_alloggi_prezzi(db)
-    esegui_lookup_alloggi_quartieri(db)
-    print("=== FINE ===")
 
 if __name__ == "__main__":
     main()

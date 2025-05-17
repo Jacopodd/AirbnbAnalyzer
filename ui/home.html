@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirbnbAnalyzer - Dashboard</title>
+  <link rel="stylesheet" href="/static/home.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+</head>
+<body>
+  <header class="topbar">
+  <div class="container">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+    <nav class="navbar">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('lista_alloggi') }}">Alloggi</a>
+      <a href="{{ url_for('nuovo_alloggio') }}">Nuovo</a>
+    </nav>
+  </div>
+</header>
+
+  <main class="container main">
+
+    <section class="hero">
+    <h1>Benvenuto in <span class="highlight">AirbnbAnalyzer</span></h1>
+    <p class="subtitle">
+      Analisi visuale e interattiva degli affitti brevi a Milano.
+      Basata su dati reali di <a href="https://insideairbnb.com/get-the-data.html" target="_blank">Inside Airbnb</a>.
+    </p>
+  </section>
+
+    <section class="overview">
+      <h2 class="section-title">Panoramica</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Totale Alloggi</h3>
+          <p id="total-listings" class="stat">{{ total_alloggi }}</p>
+        </div>
+        <div class="card">
+          <h3>Totale Host</h3>
+          <p id="total-hosts" class="stat">{{ total_host }}</p>
+        </div>
+        <div class="card">
+          <h3>Recensioni Totali</h3>
+          <p id="total-reviews" class="stat">{{ total_reviews }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="map-section" id="map">
+      <h2 class="section-title">Mappa degli Alloggi</h2>
+      <div id="map" class="map-placeholder">[Mappa interattiva qui]</div>
+    </section>
+
+    <section class="grid">
+    <div class="card">
+      <h2>📍 Visualizza Alloggi</h2>
+      <p>Consulta e gestisci gli annunci attivi.</p>
+      <a href="{{ url_for('lista_alloggi') }}" class="btn">Vai</a>
+    </div>
+    <div class="card">
+      <h2>➕ Aggiungi Alloggio</h2>
+      <p>Inserisci un nuovo annuncio nel sistema.</p>
+      <a href="{{ url_for('nuovo_alloggio') }}" class="btn">Crea</a>
+    </div>
+    <div class="card">
+      <h2>📝 Recensioni</h2>
+      <p>Visualizza recensioni collegate agli alloggi.</p>
+      <a href="{{ url_for('lookup_recensioni') }}" class="btn">Vai</a>
+    </div>
+    <div class="card">
+      <h2>👤 Host e Gestione</h2>
+      <p>Esplora la relazione tra host e alloggi gestiti.</p>
+      <a href="{{ url_for('lookup_host') }}" class="btn">Scopri</a>
+    </div>
+  </section>
+  </main>
+
+  <footer class="footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <h3>Partecipanti</h3>
+      <ul>
+        <li>Jacopo de Dominicis - j.dedominicis@studenti.unisa.it</li>
+        <li>Martina Giugliano - m.giugliano@studenti.unisa.it</li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h3>Collegamenti Rapidi</h3>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Alloggi</a></li>
+        <li><a href="#">Recensioni</a></li>
+        <li><a href="#">Host</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      © 2025 AirbnbAnalyzer – Progetto Basi di Dati 2
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='map.js') }}"></script>
+
+</body>
+</html>
