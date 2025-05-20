@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista Host - AirbnbAnalyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+{% include 'header.html' %}
+
+<main class="container">
+  <h1>👤 Lista Host</h1>
+  <a href="{{ url_for('nuovo_host') }}" class="btn">➕ Aggiungi Host</a>
+
+    <p class="subtitle">Host totali: {{ total_pages * 12 }}</p>
+
+
+  <div class="grid" style="margin-top: 2rem;">
+    {% for h in host %}
+      <div class="card">
+        <h2>{{ h.nome }}</h2>
+        <p><strong>ID:</strong> {{ h._id }}</p>
+        <p><strong>Email:</strong> {{ h.email or 'N/A' }}</p>
+        <p><strong>Numero alloggi:</strong> {{ h.num_alloggi or 0 }}</p>
+        <div class="action-buttons">
+          <a href="{{ url_for('modifica_host', host_id=h._id) }}" class="btn">✏️ Modifica</a>
+          <form method="POST" action="{{ url_for('elimina_host', host_id=h._id) }}">
+            <button type="submit" class="btn danger" onclick="return confirm('Eliminare questo host?')">🗑️ Elimina</button>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <p>Nessun host presente.</p>
+    {% endfor %}
+  </div>
+
+    <nav class="pagination">
+      {% if page > 1 %}
+        <a class="btn" href="{{ url_for('lista_host_view', page=page-1) }}">⬅️ Indietro</a>
+      {% endif %}
+      <span class="current-page">Pagina {{ page }} di {{ total_pages }}</span>
+      {% if page < total_pages %}
+        <a class="btn" href="{{ url_for('lista_host_view', page=page+1) }}">Avanti ➡️</a>
+      {% endif %}
+    </nav>
+
+  {% include 'footer.html' %}
+
+</main>
+</body>
+</html>

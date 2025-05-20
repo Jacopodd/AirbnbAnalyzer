@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ alloggio.titolo }} - Dettaglio Alloggio</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dettaglio_alloggio.css') }}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+</head>
+<body>
+  {% include 'header.html' %}
+
+  <main class="container dettaglio-container">
+    <h1>{{ alloggio.titolo }}</h1>
+    <p class="subtitle">Zona: <strong>{{ alloggio.zona }}</strong> • Host: <strong>{{ alloggio.host_nome }}</strong></p>
+    <div class="action-buttons">
+      <a href="{{ url_for('modifica_alloggio', alloggio_id=alloggio._id) }}" class="btn">✏️ Modifica</a>
+      <form method="POST" action="{{ url_for('elimina_alloggio', alloggio_id=alloggio._id) }}" style="display:inline;">
+        <button type="submit" class="btn danger" onclick="return confirm('Sei sicuro di voler eliminare questo alloggio?')">🗑️ Elimina</button>
+      </form>
+    </div>
+
+    <!-- Mappa -->
+    <div id="map" style="height: 300px; border-radius: 12px; margin-bottom: 2rem;"></div>
+
+    <section class="dettaglio-grid">
+      <div class="dettaglio-card">
+        <h2>🏠 Dettagli Alloggio</h2>
+        <p><strong>Tipo stanza:</strong> {{ alloggio.tipo_stanza }}</p>
+        <p><strong>Tipologia:</strong> {{ alloggio.tipologia_alloggio }}</p>
+        <p><strong>Letti:</strong> {{ alloggio.letti }} • Camere: {{ alloggio.camere }}</p>
+        <p><strong>Bagni:</strong> {{ alloggio.bagni_descrizione }}</p>
+        <p><strong>Servizi:</strong><br> {{ alloggio.servizi | safe }}</p>
+      </div>
+
+      <div class="dettaglio-card">
+        <h2>👤 Host</h2>
+        {% if host %}
+          <p><strong>Nome:</strong> {{ host.nome }}</p>
+          <p><strong>Totale alloggi gestiti:</strong> {{ host.num_alloggi if host.num_alloggi else 'N/A' }}</p>
+        {% else %}
+          <p>Dati host non disponibili.</p>
+        {% endif %}
+      </div>
+
+      <div class="dettaglio-card">
+        <h2>🏙️ Quartiere</h2>
+        {% if quartiere %}
+          <p><strong>Nome quartiere:</strong> {{ quartiere.properties.quartiere }}</p>
+        {% else %}
+          <p>Quartiere non identificato.</p>
+        {% endif %}
+      </div>
+
+      <div class="dettaglio-card">
+        <h2>💰 Prezzi Recenti</h2>
+        <a href="{{ url_for('lista_prezzi_alloggio', alloggio_id=alloggio._id) }}" class="btn">📄 Vedi tutti</a>
+
+
+
+        {% for p in prezzi %}
+          <p>
+            {{ p.data.strftime('%Y-%m-%d') }} — <strong>{{ p.prezzo_giornaliero }}€</strong><br>
+          </p>
+        {% else %}
+          <p>Nessun dato disponibile.</p>
+        {% endfor %}
+      </div>
+
+
+      <div class="dettaglio-card">
+        <h2>📝 Recensioni</h2>
+        <a href="{{ url_for('visualizza_recensioni', alloggio_id=alloggio._id) }}" class="btn" style="margin-bottom: 1rem;">📄 Vedi tutte</a>
+
+        {% for r in recensioni %}
+          <p><strong>{{ r.utente }}</strong> ({{ r.data }}):<br>{{ r.testo[:100] }}...</p>
+        {% else %}
+          <p>Nessuna recensione disponibile.</p>
+        {% endfor %}
+      </div>
+
+    </section>
+
+    <a href="{{ url_for('lista_alloggi') }}" class="back-btn">⬅️ Torna alla lista</a>
+  </main>
+
+  {% include 'footer.html' %}
+
+  <script>
+    const coords = JSON.parse('{{ alloggio.location.coordinates | tojson | safe }}');
+    const map = L.map('map').setView([coords[1], coords[0]], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+    L.marker([coords[1], coords[0]]).addTo(map)
+      .bindPopup("{{ alloggio.titolo }}").openPopup();
+  </script>
+</body>
+</html>

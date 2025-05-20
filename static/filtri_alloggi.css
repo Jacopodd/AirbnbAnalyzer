@@ -1,0 +1,66 @@
+/* CSS avanzato per il pannello filtri di AirbnbAnalyzer */
+
+#filtersPanel {
+  padding: 1.5rem;
+  border-radius: 16px;
+  background-color: var(--white);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+#filtersPanel .buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+#filtersPanel select,
+#filtersPanel input[type="number"] {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-size: 0.95rem;
+  min-width: 150px;
+  flex-grow: 1;
+}
+
+#filtersPanel .btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+#filtersPanel .btn:hover {
+  background-color: #e0484c;
+}
+
+#filtersPanel select:focus,
+#filtersPanel input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: #fff;
+}
+
+@media (max-width: 768px) {
+  #filtersPanel .buttons {
+    flex-direction: column;
+  }
+
+  #filtersPanel select,
+  #filtersPanel input[type="number"] {
+    width: 100%;
+  }
+
+  #filtersPanel .btn {
+    width: 100%;
+  }
+}

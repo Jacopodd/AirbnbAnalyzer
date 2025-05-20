@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Modifica Alloggio - AirbnbAnalyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='form_alloggio.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<main class="form-container">
+  <h1>Modifica Alloggio</h1>
+
+  <form method="POST">
+    <label for="titolo">Titolo</label>
+    <input type="text" name="titolo" id="titolo" value="{{ alloggio.titolo }}" required>
+
+    <label for="host_search">Cerca Host</label>
+    <input type="text" id="host_search" placeholder="Cerca per nome..." style="width:100%; padding: 0.5rem; margin-bottom: 0.5rem;">
+
+    <select id="host_select" style="width:100%; padding: 0.5rem;">
+      <option value="">-- Seleziona un host --</option>
+      {% for h in host_limited %}
+        <option value="{{ h._id }}||{{ h.nome }}">{{ h.nome }}</option>
+      {% endfor %}
+    </select>
+
+    <input type="hidden" name="host_id" id="host_id_hidden">
+    <input type="hidden" name="host_nome" id="host_nome_hidden">
+
+    <button type="button" class="btn"
+            onclick='window.open("{{ url_for("nuovo_host") }}", "_blank")'>
+      ➕ Aggiungi nuovo host
+    </button>
+
+
+
+    <label for="zona">Zona</label>
+    <input type="text" name="zona" id="zona" value="{{ alloggio.zona }}" required>
+
+    <label for="prezzo_base">Prezzo Base (€)</label>
+    <input type="number" name="prezzo_base" id="prezzo_base" step="0.01" value="{{ alloggio.prezzo_base }}">
+
+    <label for="tipo_stanza">Tipo Stanza</label>
+    <input type="text" name="tipo_stanza" id="tipo_stanza" value="{{ alloggio.tipo_stanza }}">
+
+    <label for="tipologia_alloggio">Tipologia Alloggio</label>
+    <input type="text" name="tipologia_alloggio" id="tipologia_alloggio" value="{{ alloggio.tipologia_alloggio }}">
+
+    <label for="posti_letto">Posti Letto</label>
+    <input type="number" name="posti_letto" id="posti_letto" value="{{ alloggio.posti_letto }}">
+
+    <label for="camere">Camere</label>
+    <input type="number" name="camere" id="camere" value="{{ alloggio.camere }}">
+
+    <label for="letti">Letti</label>
+    <input type="number" name="letti" id="letti" value="{{ alloggio.letti }}">
+
+    <label for="servizi">Servizi (separati da virgola)</label>
+    <input type="text" name="servizi" id="servizi" value="{{ alloggio.servizi | join(', ') }}">
+
+    <label for="rating">Rating</label>
+    <input type="number" name="rating" id="rating" step="0.01" min="0" max="5" value="{{ alloggio.rating }}">
+
+    <label for="prenotazione_immediata">Prenotazione Immediata</label>
+    <select name="prenotazione_immediata" id="prenotazione_immediata">
+      <option value="true" {% if alloggio.prenotazione_immediata %}selected{% endif %}>Sì</option>
+      <option value="false" {% if not alloggio.prenotazione_immediata %}selected{% endif %}>No</option>
+    </select>
+
+    <button type="submit">💾 Salva Modifiche</button>
+  </form>
+</main>
+
+{% include 'footer.html' %}
+
+</body>
+
+<script>
+  const hostSelect = document.getElementById("host_select");
+  const hostSearch = document.getElementById("host_search");
+  const idField = document.getElementById("host_id_hidden");
+  const nomeField = document.getElementById("host_nome_hidden");
+
+  // Aggiorna input nascosti alla selezione
+  hostSelect.addEventListener("change", () => {
+    const value = hostSelect.value;
+    if (value) {
+      const [id, nome] = value.split("||");
+      idField.value = id;
+      nomeField.value = nome;
+    } else {
+      idField.value = "";
+      nomeField.value = "";
+    }
+  });
+
+  // Filtro testuale degli <option>
+  hostSearch.addEventListener("input", () => {
+    const term = hostSearch.value.toLowerCase();
+    for (const option of hostSelect.options) {
+      const text = option.text.toLowerCase();
+      option.style.display = text.includes(term) ? "block" : "none";
+    }
+    hostSelect.selectedIndex = 0; // reset selezione visiva
+  });
+</script>
+</html>

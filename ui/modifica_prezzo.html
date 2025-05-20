@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Modifica Prezzo - AirbnbAnalyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='form_alloggio.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+  {% include 'header.html' %}
+
+  <main class="form-container">
+    <h1>Modifica Prezzo Giornaliero</h1>
+    <form method="POST">
+      <div class="form-group">
+        <label for="data">Data</label>
+        <input type="date" name="data" id="data" value="{{ prezzo.data.strftime('%Y-%m-%d') }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="prezzo_giornaliero">Prezzo (€)</label>
+        <input type="number" name="prezzo_giornaliero" id="prezzo_giornaliero" step="0.01" value="{{ prezzo.prezzo_giornaliero }}" required>
+      </div>
+
+      <button type="submit" class="btn">💾 Salva Modifiche</button>
+    </form>
+  </main>
+
+  {% include 'footer.html' %}
+</body>
+</html>

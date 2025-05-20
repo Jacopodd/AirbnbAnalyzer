@@ -1,0 +1,11 @@
+<header class="topbar">
+  <div class="container">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+    <nav class="navbar">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('lista_alloggi') }}">Alloggi</a>
+      <a href="{{ url_for('lista_host_view') }}">Host</a>
+      <a href="{{ url_for('lista_entita') }}">Nuovo</a>
+    </nav>
+  </div>
+</header>

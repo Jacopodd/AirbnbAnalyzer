@@ -259,3 +259,81 @@ body {
   color: #777;
   margin-top: 2rem;
 }
+
+/*LISTA ALLOGGI - PAGINAZIONE*/
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.pagination .btn {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.current-page {
+  font-weight: 600;
+}
+
+/* Rimuove la sottolineatura e mantiene stile coerente sulle card <a> */
+a.card {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: all 0.2s ease;
+}
+
+a.card:hover {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+a.card h2 {
+  text-decoration: none;
+  color: var(--primary);
+}
+
+
+/* Pulsante elimina stile coerente con .btn */
+form .btn.danger,
+button.btn.danger {
+  background-color: #D93939;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.6rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form .btn.danger:hover,
+button.btn.danger:hover {
+  background-color: #b92c2c;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+
+.action-buttons .btn {
+  width: auto;
+  display: inline-block;
+}
+
+
+
+

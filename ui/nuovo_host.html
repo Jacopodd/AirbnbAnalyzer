@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Nuovo Host - AirbnbAnalyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='form_alloggio.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+  {% include 'header.html' %}
+  <main class="form-container">
+    <h1>Nuovo Host</h1>
+    <form method="POST">
+      <label for="nome">Nome</label>
+      <input type="text" name="nome" id="nome" required>
+
+      <button type="submit" class="btn">➕ Aggiungi</button>
+    </form>
+  </main>
+  {% include 'footer.html' %}
+</body>
+</html>

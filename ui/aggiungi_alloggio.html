@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Nuovo Alloggio - AirbnbAnalyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='form_alloggio.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+  <!-- CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+</head>
+<body>
+
+  {% include 'header.html' %}
+
+  <h1>Nuovo Alloggio</h1>
+
+  <form method="POST" action="{{ url_for('crea_alloggio_route') }}">
+    <label for="titolo">Titolo</label>
+    <input type="text" name="titolo" id="titolo" required>
+
+    <label for="host_search">Cerca Host</label>
+    <input type="text" id="host_search" placeholder="Cerca per nome..." style="width:100%; padding: 0.5rem; margin-bottom: 0.5rem;">
+
+    <select id="host_select" style="width:100%; padding: 0.5rem;">
+      <option value="">-- Seleziona un host --</option>
+      {% for h in host_limited %}
+        <option value="{{ h._id }}||{{ h.nome }}">{{ h.nome }}</option>
+      {% endfor %}
+    </select>
+
+    <input type="hidden" name="host_id" id="host_id_hidden">
+    <input type="hidden" name="host_nome" id="host_nome_hidden">
+
+    <button type="button" class="btn"
+            onclick='window.open("{{ url_for("nuovo_host") }}", "_blank")'>
+      ➕ Aggiungi nuovo host
+    </button>
+
+
+
+
+    <label for="zona">Zona</label>
+    <input type="text" name="zona" id="zona" required>
+
+    <label for="tipo_stanza">Tipo Stanza</label>
+    <input type="text" name="tipo_stanza" id="tipo_stanza">
+
+    <label for="tipologia_alloggio">Tipologia Alloggio</label>
+    <input type="text" name="tipologia_alloggio" id="tipologia_alloggio">
+
+    <label for="prezzo_base">Prezzo Base (€)</label>
+    <input type="number" name="prezzo_base" step="0.01" id="prezzo_base">
+
+    <label for="min_notti">Min Notti</label>
+    <input type="number" name="min_notti" id="min_notti">
+
+    <label for="max_notti">Max Notti</label>
+    <input type="number" name="max_notti" id="max_notti">
+
+    <label for="posti_letto">Posti Letto</label>
+    <input type="number" name="posti_letto" id="posti_letto">
+
+    <label for="camere">Camere</label>
+    <input type="number" name="camere" id="camere">
+
+    <label for="letti">Letti</label>
+    <input type="number" name="letti" id="letti">
+
+    <label for="bagni_descrizione">Bagni</label>
+    <input type="text" name="bagni_descrizione" id="bagni_descrizione">
+
+    <label for="servizi">Servizi (separati da virgola)</label>
+    <input type="text" name="servizi" placeholder="Wi-Fi, Cucina, TV..." id="servizi">
+
+    <label for="disponibilita_annuale">Disponibilità Annuale</label>
+    <input type="number" name="disponibilita_annuale" id="disponibilita_annuale">
+
+    <label for="recensioni_totali">Recensioni Totali</label>
+    <input type="number" name="recensioni_totali" id="recensioni_totali">
+
+    <label for="ultima_recensione">Ultima Recensione (YYYY-MM-DD)</label>
+    <input type="date" name="ultima_recensione" id="ultima_recensione">
+
+    <label for="recensioni_mensili">Recensioni Mensili</label>
+    <input type="number" name="recensioni_mensili" step="0.01" id="recensioni_mensili">
+
+    <label for="rating">Rating</label>
+    <input type="number" name="rating" step="0.01" min="0" max="5" id="rating">
+
+    <label for="prenotazione_immediata">Prenotazione Immediata</label>
+    <select name="prenotazione_immediata" id="prenotazione_immediata">
+      <option value="true">Sì</option>
+      <option value="false">No</option>
+    </select>
+
+    <label for="coordinate">Coordinate (latitudine,longitudine)</label>
+    <input type="text" name="coordinate" placeholder="45.44806,9.17373" id="coordinate">
+
+    <button type="submit">➕ Crea Alloggio</button>
+  </form>
+
+   {% include 'footer.html' %}
+</body>
+
+<script>
+  const hostSelect = document.getElementById("host_select");
+  const hostSearch = document.getElementById("host_search");
+  const idField = document.getElementById("host_id_hidden");
+  const nomeField = document.getElementById("host_nome_hidden");
+
+  // Aggiorna input nascosti alla selezione
+  hostSelect.addEventListener("change", () => {
+    const value = hostSelect.value;
+    if (value) {
+      const [id, nome] = value.split("||");
+      idField.value = id;
+      nomeField.value = nome;
+    } else {
+      idField.value = "";
+      nomeField.value = "";
+    }
+  });
+
+  // Filtro testuale degli <option>
+  hostSearch.addEventListener("input", () => {
+    const term = hostSearch.value.toLowerCase();
+    for (const option of hostSelect.options) {
+      const text = option.text.toLowerCase();
+      option.style.display = text.includes(term) ? "block" : "none";
+    }
+    hostSelect.selectedIndex = 0; // reset selezione visiva
+  });
+</script>
+
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+</html>

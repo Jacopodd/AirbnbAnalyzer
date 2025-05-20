@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista Alloggi - AirbnbAnalyzer</title>
+  <link rel="stylesheet" href="/static/home.css">
+  <link rel="stylesheet" href="/static/filtri_alloggi.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+{% include 'header.html' %}
+
+<main class="container">
+  <section class="hero">
+    <h1>📋 Lista degli <span class="highlight">Alloggi</span></h1>
+    <p class="subtitle">Esplora tutti gli alloggi disponibili con possibilità di filtro e ricerca.</p>
+  </section>
+
+  <section>
+    <input type="text" id="searchInput" placeholder="Cerca per zona o host..." style="width:100%; padding: 0.75rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid #ccc;">
+    <button class="btn" onclick="toggleFilters()">🎛️ Filtri Avanzati</button>
+
+    <div id="filtersPanel" style="display:none; margin-top: 1rem; padding: 1rem; background: var(--white); border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+      <div class="buttons">
+        <select id="filterHost">
+          <option value="">-- Host --</option>
+          {% for alloggio in alloggi %}
+          <option value="{{ alloggio.host_nome }}">{{ alloggio.host_nome }}</option>
+          {% endfor %}
+        </select>
+
+        <select id="filterZona">
+          <option value="">-- Zona --</option>
+          {% for alloggio in alloggi %}
+          <option value="{{ alloggio.zona }}">{{ alloggio.zona }}</option>
+          {% endfor %}
+        </select>
+
+        <select id="filterTipo">
+          <option value="">-- Tipo Stanza --</option>
+          <option value="Entire home/apt">Intera Casa</option>
+          <option value="Private room">Stanza Privata</option>
+          <option value="Shared room">Stanza Condivisa</option>
+        </select>
+
+        <input type="number" id="filterPrezzoMin" placeholder="Prezzo Min" style="width:100px">
+        <input type="number" id="filterPrezzoMax" placeholder="Prezzo Max" style="width:100px">
+
+        <select id="sortPrezzo">
+          <option value="">Ordina Prezzo</option>
+          <option value="asc">Prezzo Crescente</option>
+          <option value="desc">Prezzo Decrescente</option>
+        </select>
+
+        <input type="number" id="filterPostiLetto" placeholder="Min Posti Letto" style="width:150px">
+
+        <select id="sortRating">
+          <option value="">Ordina Rating</option>
+          <option value="asc">Rating Crescente</option>
+          <option value="desc">Rating Decrescente</option>
+        </select>
+
+        <button class="btn" onclick="applyFilters()">Applica</button>
+        <button class="btn" onclick="resetFilters()">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid" id="listingsGrid">
+    {% for alloggio in alloggi %}
+    <a href="{{ url_for('dettaglio_alloggio', alloggio_id=alloggio._id) }}" class="card"
+   data-titolo="{{ alloggio.titolo | lower }}"
+   data-zona="{{ alloggio.zona | lower }}"
+   data-host="{{ alloggio.host_nome | lower }}"
+   data-tipo="{{ alloggio.tipo_stanza }}"
+   data-prezzo="{{ alloggio.prezzo_base }}"
+   data-posti="{{ alloggio.posti_letto }}"
+   data-rating="{{ alloggio.rating }}">
+      <h2>{{ alloggio.titolo }}</h2>
+      <p><strong>Zona:</strong> {{ alloggio.zona }}</p>
+      <p><strong>Host:</strong> {{ alloggio.host_nome }}</p>
+      <p><strong>Prezzo base:</strong> {{ alloggio.prezzo_base }}€</p>
+      <p><strong>Posti letto:</strong> {{ alloggio.posti_letto }} | <strong>Camere:</strong> {{ alloggio.camere }}</p>
+      <p><strong>Rating:</strong> {{ alloggio.rating }} ⭐</p>
+      <p><strong>Tipo:</strong> {{ alloggio.tipo_stanza }} | {{ alloggio.tipologia_alloggio }}</p>
+    </a>
+    {% endfor %}
+  </section>
+
+  <nav class="pagination">
+    {% if page > 1 %}
+      <a class="btn" href="{{ url_for('lista_alloggi', page=page-1) }}">⬅️ Indietro</a>
+    {% endif %}
+    <span class="current-page">Pagina {{ page }} di {{ total_pages }}</span>
+    {% if page < total_pages %}
+      <a class="btn" href="{{ url_for('lista_alloggi', page=page+1) }}">Avanti ➡️</a>
+    {% endif %}
+  </nav>
+
+</main>
+
+{% include 'footer.html' %}
+
+<script>
+  const searchInput = document.getElementById('searchInput');
+  function getCards() {
+    return Array.from(document.querySelectorAll('.card'));
+  }
+
+  const listingsGrid = document.getElementById('listingsGrid');
+
+  function toggleFilters() {
+    const panel = document.getElementById('filtersPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  }
+
+  searchInput.addEventListener('input', () => {
+    const term = searchInput.value.toLowerCase();
+    const cards = getCards();  // <-- aggiorna ad ogni ricerca
+    cards.forEach(card => {
+      const zona = card.getAttribute('data-zona');
+      const host = card.getAttribute('data-host');
+      const titolo = card.getAttribute('data-titolo');
+
+      card.style.display =
+        zona.includes(term) ||
+        host.includes(term) ||
+        titolo.includes(term)
+          ? 'block'
+          : 'none';
+    });
+  });
+
+
+  function applyFilters() {
+    const hostVal = document.getElementById('filterHost').value;
+    const zonaVal = document.getElementById('filterZona').value;
+    const tipoVal = document.getElementById('filterTipo').value;
+    const prezzoMin = parseFloat(document.getElementById('filterPrezzoMin').value);
+    const prezzoMax = parseFloat(document.getElementById('filterPrezzoMax').value);
+    const postiMin = parseInt(document.getElementById('filterPostiLetto').value);
+    const sortPrezzo = document.getElementById('sortPrezzo').value;
+    const sortRating = document.getElementById('sortRating').value;
+
+    let filtered = cards.filter(card => {
+      const prezzo = parseFloat(card.getAttribute('data-prezzo'));
+      const posti = parseInt(card.getAttribute('data-posti'));
+
+      return (!hostVal || card.getAttribute('data-host') === hostVal) &&
+             (!zonaVal || card.getAttribute('data-zona') === zonaVal) &&
+             (!tipoVal || card.getAttribute('data-tipo') === tipoVal) &&
+             (!isNaN(prezzoMin) ? prezzo >= prezzoMin : true) &&
+             (!isNaN(prezzoMax) ? prezzo <= prezzoMax : true) &&
+             (!isNaN(postiMin) ? posti >= postiMin : true);
+    });
+
+    if (sortPrezzo) {
+      filtered.sort((a, b) => {
+        const aVal = parseFloat(a.getAttribute('data-prezzo'));
+        const bVal = parseFloat(b.getAttribute('data-prezzo'));
+        return sortPrezzo === 'asc' ? aVal - bVal : bVal - aVal;
+      });
+    }
+
+    if (sortRating) {
+      filtered.sort((a, b) => {
+        const aVal = parseFloat(a.getAttribute('data-rating'));
+        const bVal = parseFloat(b.getAttribute('data-rating'));
+        return sortRating === 'asc' ? aVal - bVal : bVal - aVal;
+      });
+    }
+
+    listingsGrid.innerHTML = '';
+    filtered.forEach(card => listingsGrid.appendChild(card));
+  }
+
+  function resetFilters() {
+    document.getElementById('filterHost').value = '';
+    document.getElementById('filterZona').value = '';
+    document.getElementById('filterTipo').value = '';
+    document.getElementById('filterPrezzoMin').value = '';
+    document.getElementById('filterPrezzoMax').value = '';
+    document.getElementById('filterPostiLetto').value = '';
+    document.getElementById('sortPrezzo').value = '';
+    document.getElementById('sortRating').value = '';
+
+    listingsGrid.innerHTML = '';
+    cards.forEach(card => {
+      card.style.display = 'block';
+      listingsGrid.appendChild(card);
+    });
+  }
+</script>
+
+</body>
+</html>
