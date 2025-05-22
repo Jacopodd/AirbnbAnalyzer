@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Host: {{ host.nome }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+  {% include 'header.html' %}
+
+  <div class="container">
+    <div class="hero">
+      <h1>👤 {{ host.nome }}</h1>
+      <p><strong>ID:</strong> {{ host._id }}</p>
+      <p><strong>Data inserimento:</strong>
+        {% if host.data_inserimento %}
+          {{ host.data_inserimento.strftime('%Y-%m-%d') }}
+        {% else %}
+          N/D
+        {% endif %}
+      </p>
+    </div>
+
+    <h2 class="section-title">🏠 Alloggi gestiti</h2>
+
+    {% if host.alloggi_gestiti %}
+      <div class="grid">
+        {% for alloggio in host.alloggi_gestiti %}
+          <div class="card">
+            <h2>{{ alloggio.titolo }}</h2>
+            <p><strong>Zona:</strong> {{ alloggio.zona }}</p>
+            <a class="btn" href="{{ url_for('dettaglio_alloggio', alloggio_id=alloggio._id) }}">🔍 Vedi dettagli</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>⚠️ Nessun alloggio trovato per questo host.</p>
+    {% endif %}
+
+    <div class="buttons" style="margin-top: 2rem;">
+      <a class="btn" href="{{ url_for('lista_host_view') }}">⬅️ Torna alla lista host</a>
+    </div>
+  </div>
+
+  {% include 'footer.html' %}
+</body>
+</html>

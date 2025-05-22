@@ -20,7 +20,8 @@
       <div class="card">
         <h2>{{ h.nome }}</h2>
         <p><strong>ID:</strong> {{ h._id }}</p>
-        <p><strong>Email:</strong> {{ h.email or 'N/A' }}</p>
+        <a href="{{ url_for('dettaglio_host', host_id=h._id) }}" class="btn secondary">Dettagli</a>
+<!--        <p><strong>Email:</strong> {{ h.email or 'N/A' }}</p>-->
         <p><strong>Numero alloggi:</strong> {{ h.num_alloggi or 0 }}</p>
         <div class="action-buttons">
           <a href="{{ url_for('modifica_host', host_id=h._id) }}" class="btn">✏️ Modifica</a>

@@ -22,6 +22,14 @@
       </form>
     </div>
 
+    <p>
+      <strong>Quartiere calcolato da coordinate:</strong>
+      <a class="btn" href="{{ url_for('dettaglio_quartiere_alloggio', alloggio_id=alloggio._id) }}">
+        🌍 Vedi quartiere geospaziale
+      </a>
+    </p>
+
+
     <!-- Mappa -->
     <div id="map" style="height: 300px; border-radius: 12px; margin-bottom: 2rem;"></div>
 

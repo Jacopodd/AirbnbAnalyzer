@@ -285,7 +285,7 @@ def lista_host_view():
     page = int(request.args.get("page", 1))
     skip = (page - 1) * PER_PAGE
 
-    total_host = db["host"].count_documents({})
+    # Carico solo gli host della pagina attuale
     host = list(
         db["host"]
         .find()
@@ -294,12 +294,30 @@ def lista_host_view():
         .limit(PER_PAGE)
     )
 
+    # Creo una lista di ID da cercare
+    host_ids = [h["_id"] for h in host]
+
+    # Conto gli alloggi per ciascun host
+    pipeline = [
+        { "$match": { "host_id": { "$in": host_ids } } },
+        { "$group": { "_id": "$host_id", "count": { "$sum": 1 } } }
+    ]
+    counts = {doc["_id"]: doc["count"] for doc in db["alloggi"].aggregate(pipeline)}
+
+    # Assegno il conteggio a ogni host
+    for h in host:
+        h["num_alloggi"] = counts.get(h["_id"], 0)
+
+    total_host = db["host"].count_documents({})
+
     return render_template(
         "lista_host.html",
         host=host,
         page=page,
         total_pages=(total_host + PER_PAGE - 1) // PER_PAGE
     )
+
+
 
 @app.route("/host/nuovo", methods=["GET", "POST"])
 def nuovo_host():
@@ -338,6 +356,79 @@ def elimina_host(host_id):
     return redirect(url_for("lista_host"))
 
 
+@app.route("/host/<string:host_id>")
+def dettaglio_host(host_id):
+    db = get_db_connection()
+
+    # Trova l'host specifico
+    host_base = db["host"].find_one({"_id": host_id})
+    if not host_base:
+        return "Host non trovato", 404
+
+    # Esegui lookup per unire alloggi
+    pipeline = [
+        {"$match": {"_id": host_id}},
+        {"$lookup": {
+            "from": "alloggi",
+            "localField": "_id",
+            "foreignField": "host_id",
+            "as": "alloggi_gestiti"
+        }}
+    ]
+    risultati = list(db["host"].aggregate(pipeline))
+    host_dettagliato = risultati[0] if risultati else {}
+
+    # 🔁 Reintegra i campi base eventualmente mancanti
+    host_dettagliato.setdefault("data_inserimento", host_base.get("data_inserimento"))
+    host_dettagliato.setdefault("nome", host_base.get("nome"))
+
+    return render_template("dettaglio_host.html", host=host_dettagliato)
+
+@app.route("/quartiere/<string:alloggio_id>")
+def dettaglio_quartiere_alloggio(alloggio_id):
+    db = get_db_connection()
+
+    alloggio = db["alloggi"].find_one({"_id": alloggio_id})
+    if not alloggio:
+        return "Alloggio non trovato", 404
+
+    # Esegui join geospaziale per trovare il quartiere
+    quartiere = db["quartieri"].find_one({
+        "geometry": {
+            "$geoIntersects": {
+                "$geometry": alloggio.get("location", {})
+            }
+        }
+    })
+
+    # Estraggo nome quartiere (se esiste)
+    nome_quartiere = "-"
+    if quartiere:
+        nome_quartiere = quartiere.get("properties", {}).get("quartiere") or quartiere.get("neighbourhood")
+
+    return render_template("dettaglio_quartiere.html",
+                           alloggio=alloggio,
+                           nome_quartiere=nome_quartiere)
+
+@app.route("/prezzi-per-zona")
+def prezzi_per_zona():
+    db = get_db_connection()
+
+    pipeline = [
+        { "$match": { "prezzo_base": { "$ne": None }, "zona": { "$ne": None } } },
+        { "$group": {
+            "_id": "$zona",
+            "media_prezzo": { "$avg": "$prezzo_base" },
+            "num_alloggi": { "$sum": 1 }
+        }},
+        { "$sort": { "media_prezzo": -1 } }
+    ]
+
+    risultati = list(db["alloggi"].aggregate(pipeline))
+
+    return render_template("prezzi_per_zona.html", dati=risultati)
+
+
 # CAMBIO PAGINE -------------------------------------------
 @app.route("/alloggi/nuovo")
 def nuovo_alloggio():
@@ -372,16 +463,13 @@ def lista_prezzi_alloggio(alloggio_id):
 
 
 
+@app.route("/recensioni")
+def lookup_recensioni():
+    return "<h2>Qui andrà la pagina delle recensioni (da implementare)</h2>"
 
-
-
-# @app.route("/recensioni")
-# def lookup_recensioni():
-#     return "<h2>Qui andrà la pagina delle recensioni (da implementare)</h2>"
-#
-# @app.route("/host")
-# def lookup_host():
-#     return "<h2>Qui andrà la pagina degli host (da implementare)</h2>"
+@app.route("/host")
+def lookup_host():
+    return "<h2>Qui andrà la pagina degli host (da implementare)</h2>"
 
 
 @app.route("/api/alloggi_geo")

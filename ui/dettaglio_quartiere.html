@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Quartiere dell'alloggio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="container">
+        <div class="hero">
+            <h2>{{ alloggio.titolo }}</h2>
+            <p><strong>ID:</strong> {{ alloggio._id }}</p>
+            <p><strong>Zona dichiarata:</strong> {{ alloggio.zona }}</p>
+            <p><strong>Coordinate:</strong> {{ alloggio.location.coordinates }}</p>
+        </div>
+
+        <h2 class="section-title">📍 Quartiere identificato (da coordinate):</h2>
+        <div class="card-grid">
+            <div class="card">
+                {% if nome_quartiere != "-" %}
+                    <h2>{{ nome_quartiere }}</h2>
+                    <p>Il quartiere è stato trovato correttamente dalle coordinate dell'alloggio.</p>
+                {% else %}
+                    <p>❌ Nessun quartiere corrispondente trovato per queste coordinate.</p>
+                {% endif %}
+                <a href="{{ url_for('dettaglio_alloggio', alloggio_id=alloggio._id) }}" class="btn">⬅️ Torna all’alloggio</a>
+            </div>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+</html>

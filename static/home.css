@@ -334,6 +334,21 @@ button.btn.danger:hover {
   display: inline-block;
 }
 
+.btn.secondary {
+  background-color: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn.secondary:hover {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
 
 
 
